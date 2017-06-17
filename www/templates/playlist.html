@@ -1,4 +1,19 @@
 <ion-view view-title="Playlist">
+    <ion-nav-bar class="bar-assertive">
+      <ion-nav-back-button>
+      </ion-nav-back-button>
+    
+      <ion-nav-buttons side="left">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+        </button>
+      </ion-nav-buttons>
+      
+      <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear ion-android-more-vertical" ng-click="showPopover($event)">
+        </button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+  
   <ion-content>
     <h1>Playlist</h1>
   </ion-content>

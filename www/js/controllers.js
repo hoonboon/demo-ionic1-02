@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, $ionicPopover) {
 
 	// With the new view caching in Ionic, Controllers are only called
 	// when they are recreated or on app start, instead of every page change.
@@ -43,9 +43,39 @@ angular.module('starter.controllers', [])
 	$scope.goto = function(stateName) {
 		$state.go(stateName);
 	};
+	
+	
+	/*
+	 * pop over a floating view
+	 */
+	$ionicPopover.fromTemplateUrl('templates/menu.popover.html', {
+		scope: $scope
+	}).then(function(popover) {
+		$scope.popover = popover;
+	});
+	
+	$scope.showPopover = function($event) {
+		$scope.popover.show($event);
+	};
+	$scope.hidePopover = function() {
+		$scope.popover.hide();
+	};
+	//Cleanup the popover when we're done with it!
+	$scope.$on('$destroy', function() {
+		$scope.popover.remove();
+	});
+	// Execute action on hidden popover
+	$scope.$on('popover.hidden', function() {
+		// Execute action
+	});
+	// Execute action on remove popover
+	$scope.$on('popover.removed', function() {
+		// Execute action
+	});
+
 })
 
-.controller('PlaylistsCtrl', function($scope) {
+.controller('PlaylistsCtrl', function($scope, $ionicPopover) {
 	$scope.playlists = [
 		{ title: 'Reggae', id: 1 },
 		{ title: 'Chill', id: 2 },
@@ -54,7 +84,27 @@ angular.module('starter.controllers', [])
 		{ title: 'Rap', id: 5 },
 		{ title: 'Cowbell', id: 6 }
 		];
+	
+	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
+		scope: $scope
+	}).then(function(popover) {
+		$scope.popover = popover;
+	});
+	
+	$scope.showPopover = function($event) {
+		$scope.popover.show($event);
+	};
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+.controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover	) {
+	
+	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
+		scope: $scope
+	}).then(function(popover) {
+		$scope.popover = popover;
+	});
+	
+	$scope.showPopover = function($event) {
+		$scope.popover.show($event);
+	};
 });

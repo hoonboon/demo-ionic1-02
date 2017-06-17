@@ -20,29 +20,31 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 			StatusBar.styleDefault();
 		}
 		
-		$rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-
-            alert('State change from: ' + fromState.name + ' to: ' + toState.name);
-            
-            var history = $ionicHistory.viewHistory();
-	        
-	        var viewStr = '';
-	        angular.forEach(history.views, function(view, index){
-	            viewStr += view.stateName + ',';
-	        });
-	        alert('views: [' + viewStr + ']');
-	        
-	        var historyStr = '';
-	        angular.forEach(history.histories[$ionicHistory.currentHistoryId()].stack, function(view, index){
-	             historyStr += view.stateName + ',';
-	        });
-	        alert('history stack: [' + historyStr + ']');
-            
-            //$timeout(function() {
-            //    console.log('$timeout after 1 sec $ionicHistory.backView().stateName');
-            //    console.log($ionicHistory.backView() === null ? "<null>" : $ionicHistory.backView().stateName);
-            //}, 1000);
-        });
+//		$rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+//
+//            var msgStr = 'State change from: ' + fromState.name + ' to: ' + toState.name;
+//            
+//            var history = $ionicHistory.viewHistory();
+//	        
+//	        var viewStr = '';
+//	        angular.forEach(history.views, function(view, index){
+//	            viewStr += view.stateName + ',';
+//	        });
+//	        msgStr += '\n\nviews: [' + viewStr + ']';
+//	        
+//	        var historyStr = '';
+//	        angular.forEach(history.histories[$ionicHistory.currentHistoryId()].stack, function(view, index){
+//	             historyStr += view.stateName + ',';
+//	        });
+//	        msgStr += '\n\nhistory stack: [' + historyStr + ']';
+//	        
+//	        alert(msgStr);
+//            
+//            //$timeout(function() {
+//            //    console.log('$timeout after 1 sec $ionicHistory.backView().stateName');
+//            //    console.log($ionicHistory.backView() === null ? "<null>" : $ionicHistory.backView().stateName);
+//            //}, 1000);
+//        });
 	});
 })
 
@@ -54,6 +56,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 		abstract: true,
 		templateUrl: 'templates/menu.html',
 		controller: 'AppCtrl'
+	})
+
+	.state('app.home', {
+		url: '/home',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/home.html'
+			}
+		}
 	})
 
 	.state('app.search', {
@@ -94,7 +105,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 		}
 	});
 	// if none of the above states are matched, use this as the fallback
-	$urlRouterProvider.otherwise('/app/playlists');
+	$urlRouterProvider.otherwise('/app/home');
 });
 
 
