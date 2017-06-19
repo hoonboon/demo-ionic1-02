@@ -57,21 +57,6 @@ angular.module('starter.controllers', [])
 	$scope.showPopover = function($event) {
 		$scope.popover.show($event);
 	};
-	$scope.hidePopover = function() {
-		$scope.popover.hide();
-	};
-	//Cleanup the popover when we're done with it!
-	$scope.$on('$destroy', function() {
-		$scope.popover.remove();
-	});
-	// Execute action on hidden popover
-	$scope.$on('popover.hidden', function() {
-		// Execute action
-	});
-	// Execute action on remove popover
-	$scope.$on('popover.removed', function() {
-		// Execute action
-	});
 
 })
 
@@ -107,4 +92,13 @@ angular.module('starter.controllers', [])
 	$scope.showPopover = function($event) {
 		$scope.popover.show($event);
 	};
+})
+
+.controller('BrowseCtrl', function($scope, $stateParams, epaperService) {
+	
+	epaperService.getBrowseList().then(function(list) {
+        $scope.browseList = list;
+    }, function (error) {
+    });
+	
 });

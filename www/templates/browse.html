@@ -1,5 +1,12 @@
 <ion-view view-title="Browse">
-  <ion-content>
-    <h1>Browse</h1>
-  </ion-content>
+    <ion-content>
+        <h1>Browse</h1>
+        
+        <ion-list>
+            <ion-item ng-repeat="item in browseList">
+                <h2>{{item.title}}</h2>
+                <p>{{item.description}}</p>
+            </ion-item>
+        </ion-list>
+    </ion-content>
 </ion-view>
