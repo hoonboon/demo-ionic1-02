@@ -85,15 +85,8 @@ angular.module('starter.controllers', ['ngCookies'])
 		if (localStorage.getItem('myApiSessionToken') == undefined) {
 			console.log('AppCtrl.doLogout: sessionToken unavailable');
 		} else {
-<<<<<<< HEAD
 			myService.logout(localStorage.getItem('myApiSessionToken')).then(function(response){
-=======
-			myService.logout(
-					localStorage.getItem('myApiSessionToken'),
-					localStorage.getItem('myApiSessionKey'),
-					localStorage.getItem('myApiSessionValue')).then(function(response){
->>>>>>> branch 'master' of https://github.com/hoonboon/demo-ionic1-02.git
-				
+
 				console.log('AppCtrl.doLogout(): response=' + JSON.stringify(response));
 				
 				// remove session cookies
