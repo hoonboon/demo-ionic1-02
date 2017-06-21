@@ -1,6 +1,6 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ngCookies'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, $ionicPopover) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, $ionicPopover, myService, $window, $cookies) {
 
 	// With the new view caching in Ionic, Controllers are only called
 	// when they are recreated or on app start, instead of every page change.
@@ -11,6 +11,13 @@ angular.module('starter.controllers', [])
 
 	// Form data for the login modal
 	$scope.loginData = {};
+	
+	$scope.isAuthenticated = true;
+	$scope.currentUser = localStorage.getItem('myApiUsername');
+	if ($scope.currentUser == undefined) {
+		$scope.currentUser = 'Guest';
+		$scope.isAuthenticated = false;
+	}
 
 	// Create the login modal that we will use later
 	$ionicModal.fromTemplateUrl('templates/login.html', {
@@ -25,19 +32,88 @@ angular.module('starter.controllers', [])
 	};
 
 	// Open the login modal
-	$scope.login = function() {
+	$scope.showLogin = function() {
 		$scope.modal.show();
 	};
 
 	// Perform the login action when the user submits the login form
 	$scope.doLogin = function() {
-		console.log('Doing login', $scope.loginData);
-
-		// Simulate a login delay. Remove this and replace with your login
-		// code if using a login system
-		$timeout(function() {
+		
+		myService.login($scope.loginData.username, $scope.loginData.password).then(function(response){
+			
+			console.log('AppCtrl.doLogin(): data=' + JSON.stringify(response.data));
+			
+			// store credentials and returned data in local storage for subsequent api calls
+			localStorage.setItem('myApiUsername', $scope.loginData.username);
+			console.log('username: ' + $scope.loginData.username);
+			
+			var passwordEnc = window.btoa($scope.loginData.password);
+			localStorage.setItem('myApiPassword', passwordEnc);
+			console.log('passwordEnc: ' + passwordEnc);
+			
+			localStorage.setItem('myApiSessionToken', response.data.token);
+			console.log('sessionToken: ' + response.data.token);
+			
+			localStorage.setItem('myApiSessionKey', response.data.session_name);
+			console.log('sessionKey: ' + response.data.session_name);
+			
+			localStorage.setItem('myApiSessionValue', response.data.sessid);
+			console.log('sessionValue: ' + response.data.sessid);
+			
+			// store session cookies to be sent over to server for subsequent api calls
+			$cookies.put(response.data.session_name, response.data.sessid, {'path':'/'});
+			
+			$scope.currentUser = $scope.loginData.username;
+			$scope.isAuthenticated = true;
+			
+			$scope.loginData = {};
 			$scope.closeLogin();
-		}, 1000);
+			$state.go('app.browse');
+			
+		}, function(error){
+			
+			// TODO: error handling
+			console.log('AppCtrl.doLogin(): error=' + JSON.stringify(error));
+			
+		});
+		
+	};
+	
+	// Perform logout action
+	$scope.doLogout = function() {
+		
+		if (localStorage.getItem('myApiSessionToken') == undefined) {
+			console.log('AppCtrl.doLogout: sessionToken unavailable');
+		} else {
+			myService.logout(
+					localStorage.getItem('myApiSessionToken'),
+					localStorage.getItem('myApiSessionKey'),
+					localStorage.getItem('myApiSessionValue')).then(function(response){
+				
+				console.log('AppCtrl.doLogout(): response=' + JSON.stringify(response));
+				
+				// remove session cookies
+				$cookies.remove(localStorage.getItem('myApiSessionKey'));
+				
+				// remove previously saved data in local storage
+				localStorage.removeItem('myApiUsername');
+				localStorage.removeItem('myApiPassword');
+				localStorage.removeItem('myApiSessionToken');
+				localStorage.removeItem('myApiSessionKey');
+				localStorage.removeItem('myApiSessionValue');
+				
+				$scope.currentUser = 'Guest';
+				$scope.isAuthenticated = false;
+				
+				$state.go('app.home');
+				
+			}, function(error){
+				
+				// TODO: error handling
+				console.log('AppCtrl.doLogout(): error=' + JSON.stringify(error));
+				
+			});
+		}
 	};
 	
 	$scope.goto = function(stateName) {
@@ -94,9 +170,9 @@ angular.module('starter.controllers', [])
 	};
 })
 
-.controller('BrowseCtrl', function($scope, $stateParams, epaperService) {
+.controller('BrowseCtrl', function($scope, $stateParams, myService) {
 	
-	epaperService.getBrowseList().then(function(list) {
+	myService.getBrowseList().then(function(list) {
         $scope.browseList = list;
     }, function (error) {
     });

@@ -19,12 +19,15 @@
 
   <ion-side-menu side="left">
     <ion-header-bar class="bar-positive">
-      <h1 class="title">Left</h1>
+      <h1 class="title">Welcome! {{ currentUser }}</h1>
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="login()">
-          Login
+        <ion-item menu-close ng-if="!isAuthenticated" ng-click="showLogin()">
+            Login
+        </ion-item>
+        <ion-item menu-close ng-if="isAuthenticated" ng-click="doLogout()">
+            Logout
         </ion-item>
         <ion-item menu-close ng-click="goto('app.search')">
           Search
