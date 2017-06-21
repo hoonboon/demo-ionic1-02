@@ -110,6 +110,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 });
 
 
+//angular.module('starter')
+//.config(['$httpProvider', function($httpProvider) {
+//    $httpProvider.defaults.withCredentials = true;
+//}]);
+
+
 // http://blog.ionic.io/angularjs-authentication/
 //angular.module('starter')
 //.config(function($httpProvider) {

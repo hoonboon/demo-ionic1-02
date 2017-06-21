@@ -9,6 +9,12 @@ angular.module('starter')
 	// Use this when running 'ionic run' or 'ionic emulate'
 	baseUrl : 'http://cors.api.com',
 	
-	browseListUrl : '/api.json'
+	browseListUrl : '/itemList.json',
+	
+	sessionTokenUrl : '/session/token',
+	
+	loginUrl : '/user/login',
+	
+	logoutUrl : '/user/logout'
 	
 });
