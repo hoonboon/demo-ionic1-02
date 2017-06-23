@@ -3,7 +3,7 @@
   "app_id": "",
   "proxies": [
     {
-      "path": "/api-proxy",
+      "path": "/myapi-proxy",
       "proxyUrl": "http://cors.api.com"
     }
   ]

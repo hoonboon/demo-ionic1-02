@@ -1,11 +1,16 @@
 angular.module('starter.services', [])
-.factory('myService', function($http, $window, Api01Constant) {
+
+// Remote API service
+.factory('myService', function($http, $window, Api01Constants) {
 	
-	var baseUrl = Api01Constant.baseUrl;
+	var baseUrl = Api01Constants.baseUrl;
+	if (Api01Constants.useProxy) {
+		baseUrl = Api01Constants.baseUrlProxied;
+	}
 	
 	var service = {};
 	
-	var browseListUrl = Api01Constant.browseListUrl;
+	var browseListUrl = Api01Constants.browseListUrl;
 	service.getBrowseList = function() {  
 	    return $http.get(baseUrl + browseListUrl, {cache:false}).then(function(response) {
             return response.data;
@@ -15,13 +20,13 @@ angular.module('starter.services', [])
 	service.login = function(username, password) {
 		// get session token
 		var getSessionToken = function() {
-			var sessionTokenUrl = Api01Constant.sessionTokenUrl;
+			var sessionTokenUrl = Api01Constants.sessionTokenUrl;
 			
 			return $http.get(baseUrl + sessionTokenUrl, {cache:false});
 		};
 		
 		var postLogin = function(username, password, sessionToken) {
-			var loginUrl = Api01Constant.loginUrl;
+			var loginUrl = Api01Constants.loginUrl;
 			
 			return $http({
 				method : 'post',
@@ -41,7 +46,7 @@ angular.module('starter.services', [])
 	
 	service.logout = function(sessionToken) {
 		var postLogout = function(sessionToken) {
-			var logoutUrl = Api01Constant.logoutUrl;
+			var logoutUrl = Api01Constants.logoutUrl;
 			
 			return $http({
 				method : 'post',
