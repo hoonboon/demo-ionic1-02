@@ -20,6 +20,14 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 			StatusBar.styleDefault();
 		}
 		
+		// Google Analytics
+		if (typeof window.ga !== 'undefined') {
+			window.ga.startTrackerWithId('UA-101472314-1', 15);
+		} else {
+			alert("demo02: Google Analytics Unavailable!");
+		}
+		
+		
 //		$rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
 //
 //            var msgStr = 'State change from: ' + fromState.name + ' to: ' + toState.name;
@@ -71,7 +79,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 		url: '/search',
 		views: {
 			'menuContent': {
-				templateUrl: 'templates/search.html'
+				templateUrl: 'templates/search.html',
+				controller: 'SearchCtrl'
 			}
 		}
 	})

@@ -1,5 +1,21 @@
 angular.module('starter.services', [])
 
+//Google Analytics service
+.factory('gaService', function(Api01Constants) {
+	
+	var service = {};
+	
+	service.trackView = function(viewTitle) {
+		if (!Api01Constants.useProxy 
+				&& typeof window.ga !== 'undefined') { 
+			window.ga.trackView(viewTitle); 
+		}
+	}
+	
+	return service;
+	
+})
+
 // Remote API service
 .factory('myService', function($http, $window, Api01Constants) {
 	

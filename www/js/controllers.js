@@ -206,7 +206,13 @@ angular.module('starter.controllers', ['ngCookies'])
 
 })
 
-.controller('PlaylistsCtrl', function($scope, $ionicPopover) {
+.controller('PlaylistsCtrl', function($scope, $ionicPopover, gaService) {
+	
+	$scope.$on("$ionicView.beforeEnter", function(event, data){
+		console.log("State Name: ", data.stateName);
+		gaService.trackView(data.stateName);
+	});
+	
 	$scope.playlists = [
 		{ title: 'Reggae', id: 1 },
 		{ title: 'Chill', id: 2 },
@@ -227,7 +233,12 @@ angular.module('starter.controllers', ['ngCookies'])
 	};
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover	) {
+.controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover, gaService) {
+	
+	$scope.$on("$ionicView.beforeEnter", function(event, data){
+		console.log("State Name: ", data.stateName);
+		gaService.trackView(data.stateName);
+	});
 	
 	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
 		scope: $scope
@@ -240,11 +251,25 @@ angular.module('starter.controllers', ['ngCookies'])
 	};
 })
 
-.controller('BrowseCtrl', function($scope, $stateParams, myService) {
+.controller('BrowseCtrl', function($scope, $stateParams, myService, gaService) {
+	
+	$scope.$on("$ionicView.beforeEnter", function(event, data){
+		console.log("State Name: ", data.stateName);
+		gaService.trackView(data.stateName);
+	});
 	
 	myService.getBrowseList().then(function(list) {
         $scope.browseList = list;
     }, function (error) {
     });
+	
+})
+
+.controller('SearchCtrl', function($scope, $stateParams, gaService) {
+	
+	$scope.$on("$ionicView.beforeEnter", function(event, data){
+		console.log("State Name: ", data.stateName);
+		gaService.trackView(data.stateName);
+	});
 	
 });
