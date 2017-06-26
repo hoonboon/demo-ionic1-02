@@ -14,7 +14,30 @@
       </ion-nav-buttons>
     </ion-nav-bar>
   
-  <ion-content>
+  <ion-content padding="true">
     <h1>Playlist</h1>
+    <div class="list">
+    <label class="item item-input">
+        <span class="input-label">Id:</span> 
+        {{playlistId}}
+    </label>
+        <span ng-if="recordFound">
+    <label class="item item-input">
+        <span class="input-label">Title:</span> 
+        {{playlist.title}}
+    </label>
+    <label class="item item-input">
+        <span class="input-label">Description:</span> 
+        {{playlist.description}}
+    </label>
+    <label class="item item-input">
+        <span class="input-label">Last Updated:</span> 
+        {{playlist.lastUpdated | date:'yyyy-MM-dd HH:mm:ss'}}
+    </label>
+    <label class="item">
+      <button class="button button-block button-positive" type="submit" ng-click="showEdit()">Edit</button>
+    </label>
+        </span>
+    </div>
   </ion-content>
 </ion-view>

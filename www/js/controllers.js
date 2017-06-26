@@ -206,21 +206,18 @@ angular.module('starter.controllers', ['ngCookies'])
 
 })
 
-.controller('PlaylistsCtrl', function($scope, $ionicPopover, gaService) {
+.controller('PlaylistsCtrl', function($scope, $state, $ionicPopover, gaService, playlistService) {
 	
 	$scope.$on("$ionicView.beforeEnter", function(event, data){
 		console.log("State Name: ", data.stateName);
 		gaService.trackView(data.stateName);
 	});
 	
-	$scope.playlists = [
-		{ title: 'Reggae', id: 1 },
-		{ title: 'Chill', id: 2 },
-		{ title: 'Dubstep', id: 3 },
-		{ title: 'Indie', id: 4 },
-		{ title: 'Rap', id: 5 },
-		{ title: 'Cowbell', id: 6 }
-		];
+	$scope.playlists = playlistService.playlists;
+	
+	$scope.viewDetail = function(id) {
+		$state.go('app.single', {playlistId : id});
+	};
 	
 	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
 		scope: $scope
@@ -233,12 +230,58 @@ angular.module('starter.controllers', ['ngCookies'])
 	};
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover, gaService) {
+.controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover, $ionicModal, gaService, playlistService) {
 	
 	$scope.$on("$ionicView.beforeEnter", function(event, data){
 		console.log("State Name: ", data.stateName);
 		gaService.trackView(data.stateName);
 	});
+	
+	$scope.playlistId = $stateParams.playlistId;
+	
+	$scope.recordFound = false;
+	
+	var playlist = playlistService.getById($scope.playlistId);
+	
+	if (playlist != undefined) {
+		$scope.playlist = playlist;
+		$scope.recordFound = true;
+	} else {
+		alert('Record not found for Id: ' + $scope.playlistId);
+	}
+	
+	$scope.formData = {};
+	
+	// Create the edit form modal that we will use later
+	$ionicModal.fromTemplateUrl('templates/playlist_edit.html', {
+		scope: $scope
+	}).then(function(modal) {
+		$scope.modal = modal;
+	});
+
+	// Triggered in the login modal to close it
+	$scope.closeEdit = function() {
+		$scope.modal.hide();
+	};
+
+	// Open the edit modal
+	$scope.showEdit = function() {
+		$scope.formData = angular.copy($scope.playlist);
+		$scope.modal.show();
+	};
+	
+	// commit changes
+	$scope.doSave = function() {
+		$scope.playlist.title = $scope.formData.title;
+		$scope.playlist.description = $scope.formData.description;
+		$scope.playlist.lastUpdated = new Date();
+		$scope.modal.hide();
+	};
+	
+	// reset form data
+	$scope.reset = function() {
+		$scope.formData = angular.copy($scope.playlist);
+	}
 	
 	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
 		scope: $scope

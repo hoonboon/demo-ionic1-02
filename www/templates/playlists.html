@@ -16,7 +16,7 @@
 
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
+      <ion-item ng-repeat="playlist in playlists" ng-click="viewDetail({{playlist.id}})">
         {{playlist.title}}
       </ion-item>
     </ion-list>

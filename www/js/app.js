@@ -24,7 +24,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 		if (typeof window.ga !== 'undefined') {
 			window.ga.startTrackerWithId('UA-101472314-1', 15);
 		} else {
-			alert("demo02: Google Analytics Unavailable!");
+			console.log("demo02: Google Analytics Unavailable!");
 		}
 		
 		
