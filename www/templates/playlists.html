@@ -16,8 +16,16 @@
 
   <ion-content>
     <ion-list>
-      <ion-item ng-repeat="playlist in playlists" ng-click="viewDetail({{playlist.id}})">
+      <ion-item class="item item-button-right" ng-repeat="playlist in playlists" >
         {{playlist.title}}
+        <div class="buttons">
+            <button class="button button-energized" ng-click="viewDetail({{playlist.id}})">
+                <i class="icon ion-document-text"></i>
+            </button>
+            <button class="button button-assertive" ng-click="confirmDelete({{playlist.id}}, '{{playlist.title}}')">
+                <i class="icon ion-trash-a"></i>
+            </button>
+        </div>
       </ion-item>
     </ion-list>
   </ion-content>

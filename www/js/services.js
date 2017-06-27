@@ -14,11 +14,29 @@ angular.module('starter.services', [])
 		{ title: 'Cowbell', description: 'Description #6', lastUpdated : new Date(), id: 1006 }
 		];
 	
+	service.nextId = 1007;
+	
 	// returns only the first record with matching id
 	service.getById = function(id) {
 		// refer to https://stackoverflow.com/questions/40306927/find-object-by-its-property-in-array-of-objects-with-angular-way
 		return $filter('filter')(service.playlists, {'id' : Number.parseInt(id)}, true)[0];
-	}
+	};
+	
+	service.create = function(newPlaylist) {
+		newPlaylist.id = service.nextId;
+		service.nextId += 1;
+		service.playlists.push(newPlaylist);
+	};
+	
+	// remove the first record with matching id
+	service.deleteById = function(id) {
+		var index = service.playlists.findIndex(function(item) { return item.id == id; });
+		if (index >= 0) {
+			service.playlists.splice(index, 1);
+		} else {
+			alert('Item not found for id=' + id);
+		}
+	};
 	
 	return service;
 	

@@ -206,7 +206,7 @@ angular.module('starter.controllers', ['ngCookies'])
 
 })
 
-.controller('PlaylistsCtrl', function($scope, $state, $ionicPopover, gaService, playlistService) {
+.controller('PlaylistsCtrl', function($scope, $state, $ionicPopover, $ionicModal, $ionicPopup, $timeout, gaService, playlistService) {
 	
 	$scope.$on("$ionicView.beforeEnter", function(event, data){
 		console.log("State Name: ", data.stateName);
@@ -219,6 +219,63 @@ angular.module('starter.controllers', ['ngCookies'])
 		$state.go('app.single', {playlistId : id});
 	};
 	
+	$scope.formData = {};
+	
+	// Create the add form modal that we will use later
+	$ionicModal.fromTemplateUrl('templates/playlist_add.html', {
+		scope: $scope
+	}).then(function(modal) {
+		$scope.modalAdd = modal;
+	});
+
+	// Triggered in the modal to close it
+	$scope.closeAdd = function() {
+		$scope.modalAdd.hide();
+	};
+
+	// Open the add modal
+	$scope.showAdd = function() {
+		$scope.closePopover();
+		
+		$timeout(function() {
+			$scope.modalAdd.show();
+		}, 0);
+	};
+	
+	// commit changes
+	$scope.doSaveAdd = function() {
+		var newPlaylist = {};
+		newPlaylist.title = $scope.formData.title;
+		newPlaylist.description = $scope.formData.description;
+		newPlaylist.lastUpdated = new Date();
+		playlistService.create(newPlaylist);
+		$scope.formData = {};
+		$scope.modalAdd.hide();
+	};
+	
+	// delete item
+	$scope.confirmDelete = function(id, title) {
+		var confirmPopup = $ionicPopup.confirm({
+			title: 'Delete Playlist',
+			template: '<h3 align="center">Confirm to delete ' + title + '?<h3>',
+			cancelText: 'No',
+			cancelType: 'button-balanced',
+			okText: 'Yes',
+			okType: 'button-assertive'
+		});
+
+		confirmPopup.then(function(res) {
+			if(res) {
+				console.log('Proceed delete id=' + id);
+				
+				playlistService.deleteById(id);
+				
+			} else {
+				console.log('Cancel delete');
+			}
+		});
+	};
+	
 	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
 		scope: $scope
 	}).then(function(popover) {
@@ -228,6 +285,16 @@ angular.module('starter.controllers', ['ngCookies'])
 	$scope.showPopover = function($event) {
 		$scope.popover.show($event);
 	};
+
+	$scope.closePopover = function() {
+		$scope.popover.hide();
+	};
+
+	//Cleanup the popover when we're done with it!
+	$scope.$on('$destroy', function() {
+		$scope.popover.remove();
+	});
+
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover, $ionicModal, gaService, playlistService) {
@@ -259,7 +326,7 @@ angular.module('starter.controllers', ['ngCookies'])
 		$scope.modal = modal;
 	});
 
-	// Triggered in the login modal to close it
+	// Triggered in the modal to close it
 	$scope.closeEdit = function() {
 		$scope.modal.hide();
 	};
@@ -271,10 +338,11 @@ angular.module('starter.controllers', ['ngCookies'])
 	};
 	
 	// commit changes
-	$scope.doSave = function() {
+	$scope.doSaveEdit = function() {
 		$scope.playlist.title = $scope.formData.title;
 		$scope.playlist.description = $scope.formData.description;
 		$scope.playlist.lastUpdated = new Date();
+		$scope.formData = {};
 		$scope.modal.hide();
 	};
 	
@@ -283,15 +351,15 @@ angular.module('starter.controllers', ['ngCookies'])
 		$scope.formData = angular.copy($scope.playlist);
 	}
 	
-	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
-		scope: $scope
-	}).then(function(popover) {
-		$scope.popover = popover;
-	});
-	
-	$scope.showPopover = function($event) {
-		$scope.popover.show($event);
-	};
+//	$ionicPopover.fromTemplateUrl('templates/playlists.popover.html', {
+//		scope: $scope
+//	}).then(function(popover) {
+//		$scope.popover = popover;
+//	});
+//	
+//	$scope.showPopover = function($event) {
+//		$scope.popover.show($event);
+//	};
 })
 
 .controller('BrowseCtrl', function($scope, $stateParams, myService, gaService) {
