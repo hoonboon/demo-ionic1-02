@@ -5,16 +5,26 @@ angular.module('starter.services', [])
 	
 	var service = {};
 	
-	service.playlists = [
-		{ title: 'Reggae', description: 'Description #1', lastUpdated : new Date(), id: 1001 },
-		{ title: 'Chill', description: 'Description #2', lastUpdated : new Date(), id: 1002 },
-		{ title: 'Dubstep', description: 'Description #3', lastUpdated : new Date(), id: 1003 },
-		{ title: 'Indie', description: 'Description #4', lastUpdated : new Date(), id: 1004 },
-		{ title: 'Rap', description: 'Description #5', lastUpdated : new Date(), id: 1005 },
-		{ title: 'Cowbell', description: 'Description #6', lastUpdated : new Date(), id: 1006 }
-		];
+	var nextId = 1001;
+	var playlists = [];
+	for (i = 1; i <= 100; i++) {
+	    playlists.push({ title: 'Playlist #' + i, description: 'Description #' + i, lastUpdated : new Date(), id: nextId++ });
+	}
 	
-	service.nextId = 1007;
+	service.playlists = playlists;
+	
+	service.nextId = nextId;
+	
+//	service.playlists = [
+//		{ title: 'Reggae', description: 'Description #1', lastUpdated : new Date(), id: 1001 },
+//		{ title: 'Chill', description: 'Description #2', lastUpdated : new Date(), id: 1002 },
+//		{ title: 'Dubstep', description: 'Description #3', lastUpdated : new Date(), id: 1003 },
+//		{ title: 'Indie', description: 'Description #4', lastUpdated : new Date(), id: 1004 },
+//		{ title: 'Rap', description: 'Description #5', lastUpdated : new Date(), id: 1005 },
+//		{ title: 'Cowbell', description: 'Description #6', lastUpdated : new Date(), id: 1006 }
+//		];
+//	
+//	service.nextId = 1007;
 	
 	// returns only the first record with matching id
 	service.getById = function(id) {

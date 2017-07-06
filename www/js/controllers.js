@@ -294,6 +294,17 @@ angular.module('starter.controllers', ['ngCookies'])
 	$scope.$on('$destroy', function() {
 		$scope.popover.remove();
 	});
+	
+	$scope.search = {};
+	
+	$scope.reverse = false;
+	
+	$scope.toggleSort = function() {
+	    if ($scope.reverse)
+	        $scope.reverse = false;
+	    else
+	        $scope.reverse = true;
+	}
 
 })
 

@@ -7,6 +7,20 @@
             <ion-item ng-click="showAdd()">
                 Add
             </ion-item>
+            <ion-item>
+                <input type="text" ng-model="search.title" placeholder="Search Title">
+            </ion-item>
+            <ion-item class="item item-button-right">
+                Sort by Title
+                <div class="buttons">
+                    <button class="button button-calm" ng-disabled="!reverse" ng-click="toggleSort()">
+                        <i class="icon ion-arrow-up-a"></i>
+                    </button>
+                    <button class="button button-calm" ng-disabled="reverse" ng-click="toggleSort()">
+                        <i class="icon ion-arrow-down-a"></i>
+                    </button>
+                </div>
+            </ion-item>
         </ion-list>
     </ion-content>
 </ion-popover-view>

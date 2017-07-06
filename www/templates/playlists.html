@@ -15,8 +15,13 @@
     </ion-nav-bar>
 
   <ion-content>
+<!--     <div class="list list-inset"> -->
+<!--         <label class="item item-input"> -->
+<!--           <input type="text" ng-model="search.title" placeholder="Search Title"> -->
+<!--         </label> -->
+<!--     </div> -->
     <ion-list>
-      <ion-item class="item item-button-right" ng-repeat="playlist in playlists" >
+      <ion-item class="item item-button-right" ng-repeat="playlist in playlists | filter: search | orderBy: 'title': reverse" >
         {{playlist.title}}
         <div class="buttons">
             <button class="button button-energized" ng-click="viewDetail({{playlist.id}})">
