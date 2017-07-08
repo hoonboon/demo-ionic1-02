@@ -71,16 +71,33 @@ angular.module('starter.services', [])
 // Remote API service
 .factory('myService', function($http, $window, Api01Constants) {
 	
-	var baseUrl = Api01Constants.baseUrl;
-	if (Api01Constants.useProxy) {
-		baseUrl = Api01Constants.baseUrlProxied;
-	}
-	
 	var service = {};
+	
+	// param "targetUrl": "http://.../..." excluding any request params starting with "?" 
+	service.constructApiUrl = function(targetUrl) {
+        
+        // remove original baseUrl if present
+        var baseUrlPattern = /^https?:\/\/[^\/:]+/i;
+        var strippedTargetUrl = targetUrl.replace(baseUrlPattern, '');
+        //console.log('service.constructApiUrl(): targetUrl=' + targetUrl + ', strippedTargetUrl=' + strippedTargetUrl);
+        
+        var result = '';
+        if (Api01Constants.useProxy) {
+            // use proxied baseUrl
+            result = Api01Constants.baseUrlProxied + strippedTargetUrl;
+        } else {
+            // use actual baseUrl
+            result = Api01Constants.baseUrl + strippedTargetUrl;
+        }
+        
+        //console.log('service.constructApiUrl(): result=' + result);
+        
+        return result;
+    }
 	
 	var browseListUrl = Api01Constants.browseListUrl;
 	service.getBrowseList = function() {  
-	    return $http.get(baseUrl + browseListUrl, {cache:false}).then(function(response) {
+	    return $http.get(service.constructApiUrl(browseListUrl), {cache:false}).then(function(response) {
             return response.data;
         });
     };
@@ -90,7 +107,7 @@ angular.module('starter.services', [])
 		var getSessionToken = function() {
 			var sessionTokenUrl = Api01Constants.sessionTokenUrl;
 			
-			return $http.get(baseUrl + sessionTokenUrl, {cache:false});
+			return $http.get(service.constructApiUrl(sessionTokenUrl), {cache:false});
 		};
 		
 		var postLogin = function(username, password, sessionToken) {
@@ -98,7 +115,7 @@ angular.module('starter.services', [])
 			
 			return $http({
 				method : 'post',
-				url : baseUrl + loginUrl,
+				url : service.constructApiUrl(loginUrl),
 				headers : { 'X-CSRF-Token' : sessionToken },
 				data : {'username' : username, 'password' : password}
 			});
@@ -118,7 +135,7 @@ angular.module('starter.services', [])
 			
 			return $http({
 				method : 'post',
-				url : baseUrl + logoutUrl,
+				url : service.constructApiUrl(logoutUrl),
 				headers : { 'X-CSRF-Token' : sessionToken }
 			});
 		};

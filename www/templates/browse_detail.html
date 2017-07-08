@@ -1,0 +1,15 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+    <h1 class="title">Browse Detail</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeView()">Close</button>
+    </div>
+  </ion-header-bar>
+  
+  <ion-content padding="true">
+    <div class="wrapper" align="center">
+        <ng-pdf ng-if="pdfUrl" template-url="templates/pdf-viewer.html" canvasid="pdf-canvas" 
+            scale="1"></ng-pdf>
+    </div>
+  </ion-content>
+</ion-modal-view>

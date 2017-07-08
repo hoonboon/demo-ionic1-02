@@ -373,7 +373,7 @@ angular.module('starter.controllers', ['ngCookies'])
 //	};
 })
 
-.controller('BrowseCtrl', function($scope, $stateParams, myService, gaService) {
+.controller('BrowseCtrl', function($scope, $stateParams, $ionicModal, $timeout, $cordovaFileTransfer, $cordovaFileOpener2, myService, gaService, Api01Constants) {
 	
 	$scope.$on("$ionicView.beforeEnter", function(event, data){
 		console.log("State Name: ", data.stateName);
@@ -384,6 +384,108 @@ angular.module('starter.controllers', ['ngCookies'])
         $scope.browseList = list;
     }, function (error) {
     });
+	
+	function setDefaultsForPdfViewer($scope) {  
+	    $scope.scroll = 0;
+
+	    $scope.onError = function (error) {
+	        console.error('test00: ' + error);
+	        $scope.isLoaded = true;
+	    };
+
+        $scope.onPageRender = function () {
+            // comment out as the spinner seeme to be causing incorrect rendering
+//            $timeout(function() {
+//                $scope.isLoaded = true;
+//            }, 0);
+        };
+
+	    $scope.onLoad = function () {
+	        $timeout(function() {
+	            $scope.isLoaded = true;
+	        }, 1500);
+	    };
+
+	    $scope.onProgress = function (progress) {
+	        //console.log(progress);
+	    };
+	}
+	
+	// Create the edit form modal that we will use later
+    $ionicModal.fromTemplateUrl('templates/browse_detail.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
+
+    // Triggered in the modal to close it
+    $scope.closeView = function() {
+        $scope.modal.hide();
+    };
+    
+    // Open the edit modal within app
+    $scope.viewPdf = function(pdfUrl) {
+        setDefaultsForPdfViewer($scope);
+        
+        $scope.isLoaded = false;
+        
+        // show download button only if not run on browser
+        $scope.allowOpen = false;
+        if (!Api01Constants.useProxy || true) {
+            $scope.allowOpen = true; 
+        }
+        
+        $scope.pdfUrl = myService.constructApiUrl(pdfUrl);
+        $scope.modal.show();
+    };
+        
+    // Download and Open using device installed app
+    // - works only in actual devices
+    $scope.openPdf = function() {
+        // download the target file
+        var url = $scope.pdfUrl;
+        
+        var tempFileName = url.split('/').pop();
+        console.log('tempFileName=' + tempFileName);
+        if (tempFileName.indexOf('?') >= 0) {
+            tempFileName = tempFileName.substring(0, tempFileName.indexOf('?'));
+            console.log('tempFileName=' + tempFileName);
+        }
+        
+        var targetPath = cordova.file.dataDirectory + tempFileName;
+        var trustHosts = true;
+        var options = {};
+
+        $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
+        .then(function(result) {
+            // Success!
+            console.log('Download success: ' + JSON.stringify(result));
+            
+            // open the downloaded file
+            $cordovaFileOpener2.open(
+                    targetPath, // You can also use a Cordova-style file uri: cdvfile://localhost/persistent/Download/starwars.pdf
+                    'application/pdf', 
+                    { 
+                        error : function(e) { 
+                            console.log('Error status: ' + e.status + ' - Error message: ' + e.message);
+                        },
+                        success : function () {
+                            console.log('file opened successfully');                
+                        }
+                    }
+            );
+            
+        }, function(err) {
+            // Error
+            console.error('Download error: ' + JSON.stringify(err));
+        }, function (progress) {
+            $timeout(function () {
+                $scope.downloadProgress = (progress.loaded / progress.total) * 100;
+            });
+        });
+    }
+	
+	//$scope.pdfUrl = '/myapi-proxy/sites/default/files/pdf/06072017/sh20170706sibu009.pdf';
 	
 })
 

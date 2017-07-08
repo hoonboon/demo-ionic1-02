@@ -1,0 +1,14 @@
+<div align="center">
+<div class="bar-assertive padding">
+    <button class="button icon ion-minus" ng-click="zoomOut()"></button>
+    <button class="button icon" ng-click="fit()">100%</button>
+    <button class="button icon ion-plus" ng-click="zoomIn()"></button>
+    <button class="button icon ion-android-download" ng-if="allowOpen" ng-click="openPdf()"></button>
+</div>
+<div>
+    <ion-spinner ng-if="!isLoaded" icon="ios"></ion-spinner>
+    <ion-scroll direction="xy" style="width: 95vw; height: 80vh">
+        <canvas id="pdf-canvas"></canvas>
+    </ion-scroll>
+</div>
+</div>
