@@ -1,5 +1,27 @@
 <ion-view view-title="Search">
   <ion-content >
-    <h1>Search</h1>
+    <h1>Using Web Worker</h1>
+    
+    <form class="simple form">
+        <div class="list">
+            <label class="item item-input">
+                <span class="input-label">Input 1:</span> 
+                <input type="text" ng-model="formData.input1" ng-change="startProcess()" required>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Input 2:</span> 
+                <input type="text" ng-model="formData.input2" ng-change="startProcess()" required>
+            </label>
+            <label>&nbsp;</label>
+            <label class="item item-input">
+                <span class="input-label">Input 1 x Input 2 = </span> 
+                {{formData.result}}
+            </label>
+            <label>&nbsp;</label>
+            <div class="button-bar">
+                <button class="button button-energized" type="button" ng-click="reset()">Reset</button>
+            </div>
+            </div>
+    </form>
   </ion-content>
 </ion-view>

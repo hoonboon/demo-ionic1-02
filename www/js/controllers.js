@@ -373,15 +373,37 @@ angular.module('starter.controllers', ['ngCookies'])
 //	};
 })
 
-.controller('BrowseCtrl', function($scope, $stateParams, $ionicModal, $timeout, $cordovaFileTransfer, $cordovaFileOpener2, myService, gaService, Api01Constants) {
+.controller('BrowseCtrl', function($scope, $stateParams, $ionicModal, $timeout, $cordovaFileTransfer, $cordovaFileOpener2, myService, gaService, Api01Constants, BrowseWorker) {
 	
 	$scope.$on("$ionicView.beforeEnter", function(event, data){
 		console.log("State Name: ", data.stateName);
 		gaService.trackView(data.stateName);
 	});
 	
+	function preloadContents(itemList) {
+	    if (!itemList || itemList.length == 0)
+	        return;
+	    
+	    for (var i = 0; i < 5; i++) {
+	        /* ionic proxy in the main app is not applicable in the web worker context
+	         * hence need to use the original pdfurl and enable custom browser plugin to allow CORS when using ionic serve for testing
+	         */
+	        BrowseWorker.startWork(itemList[i].pdf).then(function(response) {
+                // complete
+                console.log("Complete: " + response);
+            }, function(error) {
+                // error
+                console.error("Error: " + error.message);
+            }, function(response) {
+                // notify (here you receive intermittent responses from worker)
+                console.log("Notify from worker: " + response);
+            });
+	    }
+	}
+	
 	myService.getBrowseList().then(function(list) {
         $scope.browseList = list;
+        preloadContents(list);
     }, function (error) {
     });
 	
@@ -394,7 +416,7 @@ angular.module('starter.controllers', ['ngCookies'])
 	    };
 
         $scope.onPageRender = function () {
-            // comment out as the spinner seeme to be causing incorrect rendering
+            // comment out as the spinner seems to be causing incorrect rendering
 //            $timeout(function() {
 //                $scope.isLoaded = true;
 //            }, 0);
@@ -436,7 +458,13 @@ angular.module('starter.controllers', ['ngCookies'])
         }
         
         $scope.pdfUrl = myService.constructApiUrl(pdfUrl);
+        //console.log('pdfUrl=' + $scope.pdfUrl);
         $scope.modal.show();
+        
+        // max shows spinner for 5 seconds
+        $timeout(function() {
+            $scope.isLoaded = true;
+        }, 5000);
     };
         
     // Download and Open using device installed app
@@ -489,11 +517,94 @@ angular.module('starter.controllers', ['ngCookies'])
 	
 })
 
-.controller('SearchCtrl', function($scope, $stateParams, gaService) {
+.controller('SearchCtrl', function($scope, $stateParams, gaService, Api01Constants, SearchWorker) {
 	
 	$scope.$on("$ionicView.beforeEnter", function(event, data){
 		console.log("State Name: ", data.stateName);
 		gaService.trackView(data.stateName);
 	});
+	
+	$scope.formData = {};
+	
+	if (typeof(Worker) !== "undefined") {
+	    
+	    // attempt1: unable to load from file:// when running on device
+//	    var worker = new Worker('/js/test01.worker.js');
+	    
+	    // attempt2: need to convert worker file contents into blob
+	    /*var blob = new Blob([
+	        "onmessage = function(event) {"
+	        //+ "    console.log('Called from main script: ' + event.data[0] + ', ' +  event.data[1]);"
+	        + "    var result = event.data[0] * event.data[1];"
+	        //+ "    console.log('Replying to main script: ' + result);"
+	        + "    postMessage(result);"
+	        + "};"
+	        ]);
+
+	    // Obtain a blob URL reference to our worker 'file'.
+	    var blobURL = window.URL.createObjectURL(blob);
+
+	    var worker = new Worker(blobURL);
+
+	    worker.onmessage = function(event) {
+	        $scope.formData.result = event.data;
+	        $scope.$apply();
+	        //console.log('event.data=' + event.data);
+	    };
+
+	    worker.onerror = function(error) {
+	        console.error('error.message=' + error.message);
+	    };
+
+	    $scope.startProcess = function() {
+	        //console.log('startProcess()');
+
+	        if (isFinite($scope.formData.input1) 
+	                && isFinite($scope.formData.input2)) {
+	            worker.postMessage([$scope.formData.input1, $scope.formData.input2]);
+	        } else {
+	            $scope.formData.result = '';
+	        }
+
+	    };*/
+	    
+	    // attempt3: use worker service
+	    $scope.startProcess = function() {
+            //console.log('startProcess()');
+
+            if (isFinite($scope.formData.input1) 
+                    && isFinite($scope.formData.input2)) {
+                SearchWorker.startWork([$scope.formData.input1, $scope.formData.input2]).then(function(response) {
+                    // complete
+                    console.log("Complete: " + response);
+                }, function(error) {
+                    // error
+                    console.error("Error: " + error.message);
+                }, function(response) {
+                    // notify (here you receive intermittent responses from worker)
+                    console.log("Notify from worker: " + response);
+                    
+                    $scope.formData.result = response;
+                    //$scope.$apply();
+                    //console.log('response=' + response);
+                });
+            } else {
+                $scope.formData.result = '';
+            }
+
+        };
+	    
+	    
+	} else {
+	    $scope.startProcess = function() {
+	        console.error('Web Worker not supported.');
+	    };
+	}
+	
+	$scope.reset = function() {
+	    $scope.formData.input1 = 1;
+        $scope.formData.input2 = 2;
+        $scope.startProcess();
+	}
 	
 });

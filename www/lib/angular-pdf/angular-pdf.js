@@ -146,6 +146,7 @@ var NgPdf = exports.NgPdf = ["$window", "$document", "$log", function NgPdf($win
       });
 
       PDFJS.disableWorker = true;
+      PDFJS.disableRange = true;
       scope.pageNum = pageToDisplay;
 
       scope.renderPage = function (num) {
