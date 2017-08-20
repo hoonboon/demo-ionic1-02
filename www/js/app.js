@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'pdf', 'ngCordova'])
 
-.run(function($ionicPlatform, $rootScope, $ionicHistory) {
+.run(function($ionicPlatform, $rootScope, $ionicHistory, $cordovaPushV5, $cordovaPreferences) {
 	$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 		// for form inputs)
@@ -53,6 +53,79 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 //            //    console.log($ionicHistory.backView() === null ? "<null>" : $ionicHistory.backView().stateName);
 //            //}, 1000);
 //        });
+		
+		if(window.cordova) {
+		    var options = {
+		            android: {
+		                senderID: "250705741651",
+		                "iconColor": "#343434"
+		            },
+		            ios: {
+		                alert: "true",
+		                badge: "true",
+		                sound: "true"
+		            },
+		            windows: {}
+		    };
+
+		    // initialize
+		    $cordovaPushV5.initialize(options).then(function(result) {
+		        // start listening for new notifications
+		        $cordovaPushV5.onNotification();
+		        // start listening for errors
+		        $cordovaPushV5.onError();
+		        
+		        $cordovaPushV5.register().then(function(registrationId) {
+		            console.log('Register Push Notification: registrationId=' + registrationId);
+		            
+    		        var topic = 'general';
+    		        $cordovaPushV5.subscribe(topic).then(function() {
+                        console.log('subscribed to topic:' + topic);
+                        
+                    }, function(err){
+                        console.error('Subscribe Push Notification Error: ' + err);
+                    });
+		        });
+		        
+		        // register to get registrationId
+		        //we will only register if there is no existing token keep in preference.
+//		        $cordovaPreferences.fetch('token')
+//		        .success(function(token) {
+//		            console.log("token", token);
+//		            if(token == undefined || token === "") {
+//		                $cordovaPushV5.register().then(function(registrationId) {
+//		                    var currentPlatform = ionic.Platform.platform();
+//		                    var deviceId = window.device.uuid;
+//		                    
+//		                    console.log('Register Push Notification: registrationId=' + registrationId + ', deviceId=' + deviceId + ', platform=' + currentPlatform);
+//		                    
+//		                    $cordovaPreferences.store('token', registrationId).success(function(value) {
+//		                        console.log("token stored successfully", value);
+//		                    }).error(function(error) {
+//		                        console.log("token stored failed", error);
+//		                    });
+//		                    
+//		                }, function(err){
+//		                    console.error('Register Push Notification Error: ' + err);
+//		                });
+//		            }
+//		        })
+//		        .error(function(error) {
+//		            console.log("fail to fetch token", error);
+//		        })
+
+		    });
+		    
+		    // triggered every time notification received
+		    $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+		        console.log('Received pushed notification');
+		    });
+		    
+		    // triggered every time error occurs
+		    $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, e){
+                console.log('Error receiving pushed notification');
+		    });
+		}
 	});
 })
 

@@ -1,0 +1,6 @@
+-- FCM - Cloud Messaging:
+Server Key: 
+Sender Id: 250705741651
+
+$ cordova plugin add cordova-plugin-app-preferences --save
+$ cordova plugin add phonegap-plugin-push --variable SENDER_ID=250705741651 --save
