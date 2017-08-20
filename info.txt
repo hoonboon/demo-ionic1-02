@@ -1,5 +1,5 @@
 -- FCM - Cloud Messaging:
-Server Key: ***
+Server Key: ******
 Sender Id: 250705741651
 
 $ cordova plugin add cordova-plugin-app-preferences --save
