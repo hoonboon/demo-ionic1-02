@@ -70,7 +70,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 		url: '/home',
 		views: {
 			'menuContent': {
-				templateUrl: 'templates/home.html'
+				templateUrl: 'templates/home.html',
+				controller: 'HomeCtrl'
 			}
 		}
 	})
@@ -118,6 +119,78 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 	$urlRouterProvider.otherwise('/app/home');
 });
 
+
+angular.module('starter')
+.directive('myPlaylist', function() {
+   return {
+       restrict: 'E',
+       templateUrl: 'templates/my-playlist.html'
+   };
+})
+
+.directive('myCurrentTime', function($interval, dateFilter) {
+    
+    function link(scope, element, attrs) {
+        console.log('in myCurrentTime');
+        var format, timeoutId;
+        
+        function updateTime() {
+            element.text(dateFilter(new Date(), format));
+        }
+        
+        scope.$watch(attrs.myCurrentTime, function(value){
+            format = value;
+            updateTime();
+        }); 
+        
+        element.on('$destroy', function() {
+            console.log('element.onDestroy ...');
+            $interval.cancel(timeoutId);
+        });
+        
+        scope.$on('$destroy', function() {
+            console.log('scope.onDestroy ...');
+            $interval.cancel(timeoutId);
+        });
+        
+        timeoutId = $interval(function() {
+            updateTime();
+        }, 1000);
+    }
+    
+    
+    return {
+        link : link
+    };
+})
+
+.directive('myDialog', function() {
+    return {
+        restrict: 'AE',
+        transclude: true,
+        templateUrl: 'templates/my-dialog.html'
+    };
+
+})
+
+.directive('entering', function() {
+    return function(scope, element, attrs) {
+        element.bind('mouseenter', function() {
+            scope.$apply(attrs.callfunc1);
+        });
+    };
+
+})
+
+.directive('clicking', function() {
+    return function(scope, element, attrs) {
+        element.bind('click', function() {
+            scope.$apply(attrs.callfunc1);
+        });
+    };
+
+})
+;
 
 //angular.module('starter')
 //.config(['$httpProvider', function($httpProvider) {

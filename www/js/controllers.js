@@ -1,5 +1,9 @@
 angular.module('starter.controllers', ['ngCookies'])
 
+.controller('HomeCtrl', function($scope) {
+    
+})
+
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, $ionicPopover, myService, $window, $cookies, Api01Constants) {
 
 	// With the new view caching in Ionic, Controllers are only called
@@ -308,9 +312,27 @@ angular.module('starter.controllers', ['ngCookies'])
 
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover, $ionicModal, gaService, playlistService) {
+.controller('PlaylistDialogCtrl', function($scope, $timeout) {
 	
-	$scope.$on("$ionicView.beforeEnter", function(event, data){
+    var self = this;
+    
+    self.format = 'yyyy-MM-dd HH:mm:ss';
+    self.dialogName = 'Tobias';
+    self.message = '';
+    self.hideDialog = function(message) {
+        self.message = message;
+        self.dialogIsHidden = true;
+        $timeout(function() {
+            self.message = '';
+            self.dialogIsHidden = false;
+        }, 2000);
+    };
+    
+})
+
+.controller('PlaylistCtrl', function($scope, $stateParams, $ionicPopover, $ionicModal, gaService, playlistService, $timeout) {
+	
+    $scope.$on("$ionicView.beforeEnter", function(event, data){
 		console.log("State Name: ", data.stateName);
 		gaService.trackView(data.stateName);
 	});

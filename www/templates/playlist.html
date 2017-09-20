@@ -22,22 +22,39 @@
         {{playlistId}}
     </label>
         <span ng-if="recordFound">
-    <label class="item item-input">
-        <span class="input-label">Title:</span> 
-        {{playlist.title}}
-    </label>
-    <label class="item item-input">
-        <span class="input-label">Description:</span> 
-        {{playlist.description}}
-    </label>
-    <label class="item item-input">
-        <span class="input-label">Last Updated:</span> 
-        {{playlist.lastUpdated | date:'yyyy-MM-dd HH:mm:ss'}}
-    </label>
+    <my-playlist></my-playlist>
     <label class="item">
       <button class="button button-block button-positive" type="submit" ng-click="showEdit()">Edit</button>
     </label>
         </span>
     </div>
+    
+    <div class="list" ng-controller="PlaylistDialogCtrl as dialogCtrl">
+    <a href clicking callfunc1="dialogCtrl.hideDialog('closing via clicking')">
+        Click on me for some fun!
+    </a>
+    <label class="item">
+    <span entering callfunc1="dialogCtrl.hideDialog('closing via mouseenter')">
+        Hover over me for some fun!
+    </span>
+    </label>
+    <label class="item item-input">
+        <span class="input-label" >
+        {{dialogCtrl.message}} 
+        <span my-dialog ng-hide="dialogCtrl.dialogIsHidden">
+            Check out the contents, {{dialogCtrl.dialogName}}!
+        </span>
+        </span>
+    </label>
+    <label class="item item-input">
+        <span class="input-label">Date format: </span> 
+        <input ng-model="dialogCtrl.format">
+    </label>
+    <label class="item item-input">
+        <span class="input-label">Current time is: </span> 
+        <span my-current-time="dialogCtrl.format"></span>
+    </label>
+    </div>
+    
   </ion-content>
 </ion-view>
